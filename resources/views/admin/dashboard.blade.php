@@ -105,22 +105,22 @@
 
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-purple-500 hover:shadow-2xl transition duration-300">
                 <h2 class="text-sm font-medium text-purple-600 uppercase mb-2">Proyek Aktif (Jumlah)</h2>
-                <p class="text-4xl font-bold text-gray-900">14</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_pu['total_aktif'] }}</p>
                 <p class="text-xs text-gray-500 mt-2">Total Proyek yang sedang berjalan</p>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-pink-500 hover:shadow-2xl transition duration-300">
                 <h2 class="text-sm font-medium text-pink-600 uppercase mb-2">Proyek Selesai (Jumlah)</h2>
-                <p class="text-4xl font-bold text-gray-900">58</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_pu['total_selesai'] }}</p>
                 <p class="text-xs text-gray-500 mt-2">Total Proyek yang sudah selesai</p>
              </div>
              <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-red-500 hover:shadow-2xl transition duration-300">
                 <h2 class="text-sm font-medium text-red-600 uppercase mb-2">Proyek Terlambat (Jumlah)</h2>
-                <p class="text-4xl font-bold text-gray-900">3</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_pu['total_terlambat'] }}</p>
                 <p class="text-xs text-gray-500 mt-2">Perlu penanganan segera</p>
             </div>
             <div class="bg-purple-800 text-white p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300">
                 <h2 class="text-sm font-medium text-purple-200 uppercase mb-2">SEKTOR PROYEK TERBANYAK</h2>
-                <p class="text-2xl font-bold">Infrastruktur Jalan</p>
+                <p class="text-2xl font-bold">{{ $statistik_pu['bidang_terbanyak'] }}</p>
                 <p class="text-xs text-purple-200 mt-2">Fokus pembangunan terbanyak</p>
             </div>
             
@@ -153,25 +153,25 @@
 
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-indigo-500 hover:shadow-2xl transition duration-300">
                 <h2 class="text-sm font-medium text-indigo-600 uppercase mb-2">Dokter Tersedia</h2>
-                <p class="text-4xl font-bold text-gray-900">30</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_faskes['dokter_tersedia'] ?? 0}}</p>
                 <p class="text-xs text-gray-500 mt-2">Data Tenaga Medis</p>
             </div>
             
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-green-500 hover:shadow-2xl transition duration-300">
                 <h2 class="text-sm font-medium text-green-600 uppercase mb-2">Perawat Tersedia</h2>
-                <p class="text-4xl font-bold text-gray-900">70</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_faskes['perawat_tersedia'] ?? 0 }}</p>
                 <p class="text-xs text-gray-500 mt-2">Data Tenaga Medis</p>
             </div>
 
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-yellow-500 hover:shadow-2xl transition duration-300">
                 <h2 class="text-sm font-medium text-yellow-600 uppercase mb-2">Bidan Tersedia</h2>
-                <p class="text-4xl font-bold text-gray-900">20</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_faskes['bidan_tersedia'] ?? 0 }}</p>
                 <p class="text-xs text-gray-500 mt-2">Data Tenaga Medis</p>
             </div>
             
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-red-500 hover:shadow-2xl transition duration-300">
                 <h2 class="text-sm font-medium text-red-600 uppercase mb-2">Faskes Terdaftar</h2>
-                <p class="text-4xl font-bold text-gray-900">35</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_faskes['faskes_terdaftar'] ?? 0 }}</p>
                 <p class="text-xs text-gray-500 mt-2">Total Fasilitas Kesehatan</p>
             </div>
 
@@ -322,6 +322,54 @@ function createContentHtml(tabName) {
     return html;
 }
 
+function renderFaskesDetail(data) {
+    if (!data || Object.keys(data).length === 0) {
+        return `<p class="text-red-500">Data faskes tidak ditemukan.</p>`;
+    }
+
+    let html = `<h3 class="font-bold text-xl mb-3 text-gray-800 border-b pb-2">Detail Fasilitas Kesehatan</h3>`;
+    for (const [key, value] of Object.entries(data)) {
+        html += `<p class="text-base mb-1 text-gray-700"><span class="font-medium">${key}:</span> ${value}</p>`;
+    }
+    return `
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Detail Fasilitas Kesehatan</h3>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-2 text-gray-700">
+            <div><span class="font-semibold">Nama Faskes:</span> ${data['nama_faskes'] ?? '-'}</div>
+            <div><span class="font-semibold">ID Faskes:</span> ${data['iD_faskes'] ?? '-'}</div>
+            <div><span class="font-semibold">Jenis Faskes:</span> ${data['jenis_faskes'] ?? '-'}</div>
+            <div><span class="font-semibold">Alamat Faskes:</span> ${data['alamat_faskes'] ?? '-'}</div>
+            <div><span class="font-semibold">Jumlah Dokter:</span> ${data['dokter'] ?? 0}</div>
+            <div><span class="font-semibold">Jumlah Perawat:</span> ${data['perawat'] ?? 0}</div>
+            <div><span class="font-semibold">Jumlah Bidan:</span> ${data['bidan'] ?? 0}</div>
+        </div>
+    </div>`;
+}
+
+function renderProyekDetail(data) {
+    if (!data || Object.keys(data).length === 0) {
+        return `<p class="text-red-500">Data Proyek tidak ditemukan.</p>`;
+    }
+
+    let html = `<h3 class="font-bold text-xl mb-3 text-gray-800 border-b pb-2">Detail Proyek Umum</h3>`;
+    for (const [key, value] of Object.entries(data)) {
+        html += `<p class="text-base mb-1 text-gray-700"><span class="font-medium">${key}:</span> ${value}</p>`;
+    }
+    return `
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Detail Proyek Umum</h3>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-2 text-gray-700">
+            <div><span class="font-semibold">Nama Proyek:</span> ${data['nama'] ?? '-'}</div>
+            <div><span class="font-semibold">ID Proyek:</span> ${data['id'] ?? '-'}</div>
+            <div><span class="font-semibold">Bidang Proyek:</span> ${data['bidang'] ?? '-'}</div>
+            <div><span class="font-semibold">Lokasi Proyek:</span> ${data['lokasi'] ?? '-'}</div>
+            <div><span class="font-semibold">Tahun:</span> ${data['tahun'] ?? 0}</div>
+            <div><span class="font-semibold">Status:</span> ${data['status'] ?? 0}</div>
+        </div>
+    </div>`;
+}
+
+
 // Fungsi untuk menangani pencarian/update
 function handleSearch(dinasName, tabName) {
     let contentId;
@@ -345,9 +393,49 @@ function handleSearch(dinasName, tabName) {
 
     const contentElement = document.getElementById(contentId);
     
-    if (contentElement) {
-        contentElement.innerHTML = createContentHtml(targetTabName);
+    // Dinas Pekerjaan umum
+    if (dinasName === 'pekerjaan-umum') {
+    const proyekId = document.getElementById('inputProyekPU').value.trim();
+    if (!proyekId) {
+        contentElement.innerHTML = `<p class="text-yellow-600">Silakan masukkan ID Proyek terlebih dahulu.</p>`;
+        return;
     }
+
+    fetch(`/admin/proyek/detail?id=${encodeURIComponent(proyekId)}`)
+        .then(res => res.json())
+        .then(data => {
+            contentElement.innerHTML = renderProyekDetail(data); // ✅ BENAR
+        })
+        .catch(err => {
+            contentElement.innerHTML = `<p class="text-red-500">Gagal ambil data Pekerjaan Umum.</p>`;
+            console.error(err);
+        });
+    return;
+    }
+
+
+    // Dinas Kesehatan
+    if (dinasName === 'kesehatan') {
+    contentId = 'nikContent-kesehatan';
+    const namaFaskes = document.getElementById('nikInputKesehatan').value.trim();
+
+    if (!namaFaskes) {
+        contentElement.innerHTML = `<p class="text-yellow-600">Silakan masukkan nama faskes terlebih dahulu.</p>`;
+        return;
+    }
+
+    fetch(`/admin/faskes/detail?nama=${encodeURIComponent(namaFaskes)}`)
+        .then(res => res.json())
+        .then(data => {
+            contentElement.innerHTML = renderFaskesDetail(data);
+        })
+        .catch(err => {
+            contentElement.innerHTML = `<p class="text-red-500">Gagal ambil data faskes.</p>`;
+            console.error(err);
+        });
+    return;
+    }
+
 }
 
 
@@ -421,6 +509,11 @@ if(ctxPendapatan){
 }
 
 // Chart Kesehatan (Doughnut Chart: Proporsi Tenaga Medis)
+const tenagaMedisData = {
+        dokter: {{ $statistik_faskes['dokter_tersedia'] ?? 0 }},
+        perawat: {{ $statistik_faskes['perawat_tersedia'] ?? 0 }},
+        bidan: {{ $statistik_faskes['bidan_tersedia'] ?? 0 }}
+    };
 const ctxKesehatan = document.getElementById('chartKesehatan')?.getContext('2d');
 if(ctxKesehatan){
     new Chart(ctxKesehatan,{
@@ -429,7 +522,10 @@ if(ctxKesehatan){
             labels:['Dokter','Perawat','Bidan'],
             datasets:[{
                 label:'Jumlah Staf', 
-                data:[30, 70, 20], 
+                data:[tenagaMedisData.dokter,
+                tenagaMedisData.perawat,
+                tenagaMedisData.bidan
+                ], 
                 backgroundColor:['#4F46E5','#059669','#F59E0B'], 
                 hoverOffset: 4
             }]
@@ -455,6 +551,11 @@ if(ctxKesehatan){
 }
 
 // Chart Pekerjaan Umum (Bar Chart: Status Proyek)
+const statistikPU = {
+    aktif: {{ $statistik_pu['total_aktif'] ?? 0 }},
+    selesai: {{ $statistik_pu['total_selesai'] ?? 0 }},
+    terlambat: {{ $statistik_pu['total_terlambat'] ?? 0 }}
+};
 const ctxProyek = document.getElementById('chartProyek')?.getContext('2d');
 if(ctxProyek){
     new Chart(ctxProyek,{
@@ -463,7 +564,10 @@ if(ctxProyek){
             labels:['Aktif','Selesai','Terlambat'],
             datasets:[{
                 label:'Jumlah Proyek', 
-                data:[14, 58, 3], 
+                data:[statistikPu.aktif,
+                statistikPu.selesai,
+                statistikPu.terlambat
+                ], 
                 backgroundColor:['#8B5CF6','#EC4899','#EF4444'], 
                 borderWidth: 1
             }]

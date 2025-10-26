@@ -196,25 +196,26 @@
                     <p class="text-gray-600">Hasil pencarian Detail Layanan dan Persyaratan akan muncul di sini.</p>
                 </div>
             </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-blue-500 hover:shadow-2xl transition duration-300">
+            <!-- Total Layanan Masuk (Bulan Ini) -->
+            <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-blue-500">
                 <h2 class="font-semibold mb-2 text-sm text-blue-600 uppercase">Total Layanan Masuk (Bulan Ini)</h2>
-                <p class="text-4xl font-bold text-gray-900">4.520</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_dinduk['totalLayananBulanIni'] ?? 0 }}</p>
                 <p class="text-xs text-gray-500 mt-2">Dihitung dari Entitas Layanan</p>
             </div>
-            
-            <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-red-500 hover:shadow-2xl transition duration-300">
+
+            <!-- Persentase Layanan Tertunda -->
+            <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-red-500">
                 <h2 class="font-semibold mb-2 text-sm text-red-600 uppercase">Persentase Layanan Tertunda</h2>
-                <p class="text-4xl font-bold text-gray-900">15%</p>
+                <p class="text-4xl font-bold text-gray-900">{{ isset($statistik_dinduk['persentaseLayananTertunda']) ? $statistik_dinduk['persentaseLayananTertunda'] . '%' : '0%' }}</p>
                 <p class="text-xs text-gray-500 mt-2">Karena kekurangan persyaratan</p>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-purple-500 hover:shadow-2xl transition duration-300">
+            <!-- Total Layanan Selesai -->
+            <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-purple-500">
                 <h2 class="font-semibold mb-2 text-sm text-purple-600 uppercase">Layanan Selesai</h2>
-                <p class="text-4xl font-bold text-gray-900">3.800</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_dinduk['totalLayananSelesai'] ?? 0 }}</p>
                 <p class="text-xs text-gray-500 mt-2">Total layanan yang sudah selesai</p>
-            </div>
-            
+            </div>            
             <div class="bg-white p-6 rounded-2xl shadow-xl lg:col-span-3">
                 <h2 class="text-xl font-semibold mb-2 text-gray-800">5 Jenis Layanan Paling Banyak Diajukan</h2>
                 <div class="chart-container">
@@ -359,6 +360,51 @@ function renderProyekDetail(data) {
     </div>`;
 }
 
+function renderPendudukDetail(data) {
+    if (!data || Object.keys(data).length === 0) {
+        return `<p class="text-red-500">Data layanan tidak ditemukan.</p>`;
+    }
+
+    const status = data['status_Layanan'] ?? '-';
+    let statusColor = 'text-gray-600';
+
+    if (status.toLowerCase().includes('proses')) {
+        statusColor = 'text-yellow-600';
+    } else if (status.toLowerCase().includes('selesai')) {
+        statusColor = 'text-green-600';
+    } else if (status.toLowerCase().includes('tertunda')) {
+        statusColor = 'text-red-600';
+    }
+
+    let html = `
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">
+            Status Layanan & Persyaratan (ID: ${data['iD_Pengajuan'] ?? '-'})
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-gray-700">
+            <div><span class="font-semibold">ID Layanan:</span> ${data['iD_Pengajuan'] ?? '-'}</div>
+            <div><span class="font-semibold">Jenis Layanan:</span> ${data['jenis_Layanan'] ?? '-'}</div>
+            <div><span class="font-semibold">Nama Pemohon:</span> ${data['nama_pemohon'] ?? '-'}</div>
+            <div><span class="font-semibold">Tanggal Pengajuan:</span> ${data['tanggal_Pengajuan']?.split('T')[0] ?? '-'}</div>
+            <div><span class="font-semibold">Status Layanan:</span> <span class="${statusColor} font-bold">${status}</span></div>
+        </div>`;
+
+    if (Array.isArray(data['status_Persyaratan']) && data['status_Persyaratan'].length > 0) {
+        html += `<h4 class="mt-6 mb-2 font-semibold text-gray-800">STATUS PERSYARATAN</h4>`;
+        html += `<ul class="list-disc pl-5 text-gray-700">`;
+        data['status_Persyaratan'].forEach(item => {
+            const kelengkapan = item['status_Kelengkapan'] ?? '-';
+            const warna = kelengkapan.toLowerCase() === 'lengkap' ? 'text-green-600' : 'text-red-600';
+            html += `<li>${item['nama_Persyaratan']}: <span class="font-bold ${warna}">${kelengkapan}</span></li>`;
+        });
+        html += `</ul>`;
+    }
+
+    html += `</div>`;
+    return html;
+}
+
+
 
 // Fungsi untuk menangani pencarian/update
 function handleSearch(dinasName, tabName) {
@@ -394,39 +440,62 @@ function handleSearch(dinasName, tabName) {
     fetch(`/admin/proyek/detail?id=${encodeURIComponent(proyekId)}`)
         .then(res => res.json())
         .then(data => {
-            contentElement.innerHTML = renderProyekDetail(data); // ✅ BENAR
+            contentElement.innerHTML = renderProyekDetail(data); 
         })
         .catch(err => {
             contentElement.innerHTML = `<p class="text-red-500">Gagal ambil data Pekerjaan Umum.</p>`;
             console.error(err);
-        });
+        }
+    );
     return;
     }
 
 
     // Dinas Kesehatan
     if (dinasName === 'kesehatan') {
-    contentId = 'nikContent-kesehatan';
-    const namaFaskes = document.getElementById('nikInputKesehatan').value.trim();
+        contentId = 'nikContent-kesehatan';
+        const namaFaskes = document.getElementById('nikInputKesehatan').value.trim();
 
-    if (!namaFaskes) {
-        contentElement.innerHTML = `<p class="text-yellow-600">Silakan masukkan nama faskes terlebih dahulu.</p>`;
-        return;
-    }
+        if (!namaFaskes) {
+            contentElement.innerHTML = `<p class="text-yellow-600">Silakan masukkan nama faskes terlebih dahulu.</p>`;
+            return;
+        }
 
-    fetch(`/admin/faskes/detail?nama=${encodeURIComponent(namaFaskes)}`)
-        .then(res => res.json())
-        .then(data => {
-            contentElement.innerHTML = renderFaskesDetail(data);
-        })
-        .catch(err => {
-            contentElement.innerHTML = `<p class="text-red-500">Gagal ambil data faskes.</p>`;
-            console.error(err);
-        });
+        fetch(`/admin/faskes/detail?nama=${encodeURIComponent(namaFaskes)}`)
+            .then(res => res.json())
+            .then(data => {
+                contentElement.innerHTML = renderFaskesDetail(data);
+            })
+            .catch(err => {
+                contentElement.innerHTML = `<p class="text-red-500">Gagal ambil data faskes.</p>`;
+                console.error(err);
+            }
+        );
     return;
     }
 
+    // Dinas Kependudukan 
+    if (dinasName === 'kependudukan') {
+        const layananId = document.getElementById('inputLayananKependudukan').value.trim();
+        if (!layananId) {
+            contentElement.innerHTML = `<p class="text-yellow-600">Silakan masukkan ID Layanan terlebih dahulu.</p>`;
+            return;
+        }
+
+        fetch(`/admin/penduduk/detail?id=${encodeURIComponent(layananId)}`)
+            .then(res => res.json())
+            .then(data => {
+                contentElement.innerHTML = renderPendudukDetail(data);
+            })
+            .catch(err => {
+                contentElement.innerHTML = `<p class="text-red-500">Gagal ambil data layanan kependudukan.</p>`;
+                console.error(err);
+            });
+        return;
+    }
 }
+
+
 
 
 // ==========================================================
@@ -556,9 +625,9 @@ if(ctxProyek){
             labels:['Aktif','Selesai','Terlambat'],
             datasets:[{
                 label:'Jumlah Proyek', 
-                data:[statistikPu.aktif,
-                statistikPu.selesai,
-                statistikPu.terlambat
+                data:[statistikPU.aktif,
+                statistikPU.selesai,
+                statistikPU.terlambat
                 ], 
                 backgroundColor:['#8B5CF6','#EC4899','#EF4444'], 
                 borderWidth: 1
@@ -589,13 +658,16 @@ if(ctxProyek){
 // Chart Kependudukan (Bar Chart: 5 Layanan Terbanyak Diajukan)
 const ctxLayananKependudukan = document.getElementById('chartLayananKependudukan')?.getContext('2d');
 if(ctxLayananKependudukan){
+    const data = @json($lp_disduk);
+    const labels = data.map(item => item.namaLayanan);
+    const values = data.map(item => item.jumlah);
     new Chart(ctxLayananKependudukan,{
         type:'bar',
         data:{
             labels:['KK Baru','KTP Baru','Akta Lahir','Pindah Domisili','Akta Kematian'],
             datasets:[{
                 label:'Jumlah Pengajuan', 
-                data:[1500, 1200, 850, 500, 470], 
+                data:values, 
                 backgroundColor:['#3B82F6','#10B981','#F59E0B','#4F46E5','#EF4444'], 
                 borderWidth: 1
             }]

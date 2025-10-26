@@ -37,9 +37,9 @@
 
     <div id="widgetContainer">
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 dinasWidget" data-dinas="pendapatan">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 dinasWidget" data-dinas="pendapatan">
             
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl lg:col-span-full">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl lg:col-span-3">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">🔍 Cek Status Wajib Pajak (via ID Wajib Pajak)</h2>
                 <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
                     <input type="text" id="nikInputPendapatan" placeholder="Contoh: Masukkan ID Wajib Pajak WPX001" class="border border-gray-300 p-3 rounded-lg w-full md:w-3/4 focus:ring-blue-500 focus:border-blue-500">
@@ -55,7 +55,7 @@
                 </div>
             </div>
             
-            <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-blue-500 hover:shadow-2xl transition duration-300 lg:col-span-1">
+            <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-blue-500 hover:shadow-2xl transition duration-300">
                 <p class="text-sm font-medium text-blue-600 uppercase mb-2">Total Pendapatan Pajak</p>
                 <p class="text-4xl font-bold text-gray-900">Rp 125,5 Jt</p>
                 <p class="text-xs text-gray-500 mt-2">Target 75% Tercapai</p>
@@ -70,24 +70,18 @@
                 <p class="text-2xl font-bold text-gray-900">PBB dan Reklame</p>
                 <p class="text-xs text-gray-500 mt-2">Berdasarkan Jumlah Transaksi</p>
             </div>
-             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-orange-500 hover:shadow-2xl transition duration-300">
-                <p class="text-sm font-medium text-orange-600 uppercase mb-2">Persentase Kepatuhan</p>
-                <p class="text-4xl font-bold text-gray-900">85%</p>
-                <p class="text-xs text-gray-500 mt-2">Wajib Pajak yang Tepat Waktu</p>
-            </div>
             
-            <div class="bg-blue-600 text-white p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 lg:col-span-4">
-                <h2 class="text-xl font-semibold mb-2">Grafik Tren Pembayaran Pajak (7 Bulan Terakhir)</h2>
+            <div class="bg-blue-600 text-white p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 lg:col-span-3">
+                <h2 class="text-xl font-semibold mb-2">Grafik Tren Pembayaran Pajak (3 Bulan Terakhir)</h2>
                 <div class="chart-container">
                     <canvas id="chartPendapatan"></canvas> 
                 </div>
             </div>
             
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 dinasWidget hidden" data-dinas="pekerjaan-umum">
             
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl md:col-span-full">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl md:col-span-4">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">🔍 Cari Proyek Detail (via ID/Nama Proyek)</h2>
                 <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
                     <input type="text" id="inputProyekPU" placeholder="Contoh: Masukkan ID Proyek PU023" class="border border-gray-300 p-3 rounded-lg w-full md:w-3/4 focus:ring-purple-500 focus:border-purple-500">
@@ -135,7 +129,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10 dinasWidget hidden" data-dinas="kesehatan">
 
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl lg:col-span-full">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl lg:col-span-4">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">🔍 Cari Data Fasilitas Kesehatan (Faskes)</h2>
                 <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
                     <input type="text" id="nikInputKesehatan" placeholder="Contoh: Masukkan Nama Faskes RSUD Sentosa" class="border border-gray-300 p-3 rounded-lg w-full md:w-3/4 focus:ring-green-500 focus:border-green-500">
@@ -184,17 +178,18 @@
             
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 dinasWidget hidden" data-dinas="kependudukan">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 dinasWidget hidden" data-dinas="kependudukan">
             
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl lg:col-span-full">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl lg:col-span-3">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">🔍 Cek Status Layanan Kependudukan (via ID Layanan)</h2>
                 <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
-                    <input type="text" id="inputLayananKependudukan" placeholder="Contoh: Masukkan ID Layanan LYN001" class="border border-gray-300 p-3 rounded-lg w-full md:w-3/4 focus:ring-indigo-500 focus:border-indigo-500">
-                    <button onclick="handleSearch('kependudukan', 'layanan-detail')" class="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-indigo-700 transition w-full md:w-1/4">Cek Status</button>
+                    <input type="text" id="inputLayananKependudukan" placeholder="Contoh: Masukkan ID Layanan LYN001" class="border border-gray-300 p-3 rounded-lg w-full md:w-3/4 focus:ring-orange-500 focus:border-orange-500">
+                    <button onclick="handleSearch('kependudukan', 'layanan-detail')" 
+                        class="bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-orange-700 transition w-full md:w-1/4">Cek Status</button>
                 </div>
 
                 <ul class="flex border-b border-gray-200 mt-6 mb-4" id="tabs-layanan">
-                    <li class="pb-2 border-b-2 border-indigo-500 cursor-pointer font-semibold text-gray-700" data-tab="layanan-detail">Hasil Cek Status Layanan</li>
+                    <li class="pb-2 border-b-2 border-orange-500 cursor-pointer font-semibold text-gray-700" data-tab="layanan-detail">Hasil Cek Status Layanan</li>
                 </ul>
 
                 <div id="content-layanan" class="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -214,19 +209,13 @@
                 <p class="text-xs text-gray-500 mt-2">Karena kekurangan persyaratan</p>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-green-500 hover:shadow-2xl transition duration-300">
-                <h2 class="font-semibold mb-2 text-sm text-green-600 uppercase">Rata-Rata Waktu Proses</h2>
-                <p class="text-4xl font-bold text-gray-900">1.2 Hari</p>
-                <p class="text-xs text-gray-500 mt-2">Dihitung dari layanan selesai</p>
-            </div>
-            
             <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-purple-500 hover:shadow-2xl transition duration-300">
                 <h2 class="font-semibold mb-2 text-sm text-purple-600 uppercase">Layanan Selesai</h2>
                 <p class="text-4xl font-bold text-gray-900">3.800</p>
                 <p class="text-xs text-gray-500 mt-2">Total layanan yang sudah selesai</p>
             </div>
             
-            <div class="bg-white p-6 rounded-2xl shadow-xl lg:col-span-4">
+            <div class="bg-white p-6 rounded-2xl shadow-xl lg:col-span-3">
                 <h2 class="text-xl font-semibold mb-2 text-gray-800">5 Jenis Layanan Paling Banyak Diajukan</h2>
                 <div class="chart-container">
                     <canvas id="chartLayananKependudukan"></canvas> 
@@ -234,7 +223,7 @@
             </div>
 
         </div>
-    </div>
+        </div>
     
 </div>
 
@@ -281,16 +270,17 @@ const dummyData = {
             { key: "Alamat Faskes", value: "Jl. Kesehatan No. 1, Pusat Kab." }, 
             { key: "Jumlah Dokter", value: "35" }, 
             { key: "Jumlah Perawat", value: "110" }, 
-            { key: "Jumlah Bidan", value: "25" } 
+            { key: "Jumlah Bidan", value: "20" } 
         ]
     },
 
-    // DINAS KEPENDUDUKAN
+    // DINAS KEPENDUDUKAN (Nama Pemohon sudah ditambahkan)
     'layanan-detail': {
         title: "Status Layanan & Persyaratan (ID: LYN001)",
         data: [
             { key: "ID Layanan", value: "LYN001" },
             { key: "Jenis Layanan", value: "Pengurusan Akta Kelahiran Anak" },
+            { key: "Nama Pemohon", value: "<span class='font-bold text-gray-800'>Putri Puspita</span>" }, 
             { key: "Tanggal Pengajuan", value: "2025-05-10" },
             { key: "Status Layanan", value: "<span class='font-bold text-yellow-600'>Dalam Proses (Menunggu Verifikasi Persyaratan)</span>" },
             { key: "---", value: "---" },
@@ -479,16 +469,18 @@ dinasTabs.forEach(tab => {
 // B. Inisialisasi Chart
 // ==========================================================
 
-// Chart Pendapatan (Line Chart)
+// Chart Pendapatan (Line Chart) - DIUBAH MENJADI 3 BULAN
 const ctxPendapatan = document.getElementById('chartPendapatan')?.getContext('2d');
 if(ctxPendapatan){
     new Chart(ctxPendapatan, {
         type:'line',
         data:{
-            labels:['Jan','Feb','Mar','Apr','Mei','Jun','Jul'],
+            // Label diubah menjadi 3 bulan
+            labels:['Agu','Sep','Okt'],
             datasets:[{
                 label:'Pendapatan (Milyar)', 
-                data:[1.2, 1.5, 1.3, 1.8, 2.0, 1.9, 2.3], 
+                // Data diubah menjadi 3 bulan
+                data:[1.9, 2.0, 2.3], 
                 borderColor:'white', 
                 backgroundColor:'rgba(255,255,255,0.3)', 
                 tension:0.4,

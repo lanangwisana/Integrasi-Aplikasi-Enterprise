@@ -15,5 +15,7 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/penduduk/detail', [DashboardController::class, 'cariPenduduk'])->name('admin.penduduk.detail');
     Route::get('/penduduk/statistik', [DashboardController::class, 'statistikPenduduk'])->name('admin.penduduk.statistik');
+
+    Route::get('/pajak/detail', [DashboardController::class, 'cariPendapatan'])->name('admin.pajak.detail');
 });
 

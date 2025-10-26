@@ -13,4 +13,8 @@ return [
         'base_uri' => env('ESB_DINDUK_BASE_URI', 'http://10.152.21.47:5000/api/kependudukan'),
         'auth' => null,
     ],
+    'dinjak' => [
+        'base_uri' => env('ESB_DINPENDA_BASE_URI', 'http://10.152.21.47:3000'),
+        'auth' => null,
+    ],
 ];

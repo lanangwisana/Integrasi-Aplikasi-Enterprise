@@ -24,7 +24,15 @@ class DashboardController extends Controller
         $lp_disduk = $lp_disduk->json();
         $lp_disduk = $lp_disduk ?? [];
 
-        return view('admin.dashboard', compact('statistik_faskes', 'statistik_pu', 'statistik_dinduk', 'lp_disduk'));
+        $statistik_dinpenda = Http::get(config('esb.dinjak.base_uri') . '/statistik');
+        $statistik_dinpenda = $statistik_dinpenda->json();
+        $statistik_dinpenda = $statistik_dinpenda ?? [];
+
+        $tren_pajak = Http::get(config('esb.dinjak.base_uri') . '/tren-pajak');
+        $tren_pajak = $tren_pajak->json();
+        $tren_pajak = $tren_pajak ?? [];
+
+        return view('admin.dashboard', compact('statistik_faskes', 'statistik_pu', 'statistik_dinduk', 'lp_disduk', 'statistik_dinpenda', 'tren_pajak'));
     }
     public function cariFaskes(Request $request)
     {
@@ -66,5 +74,19 @@ class DashboardController extends Controller
 
         return response()->json($filtered ?? []);
     }
+
+    public function cariPendapatan(Request $request)
+    {
+        $id = strtolower(trim($request->query('id')));
+        $response = Http::get(config('esb.dinjak.base_uri') . '/pajak');
+        $data = $response->json();
+
+        $filtered = collect($data ?? [])->first(function ($item) use ($id) {
+            return strtolower($item['ID_WAJIB_PAJAK'] ?? '') === $id;
+        });
+
+        return response()->json($filtered ?? []);
+    }
+
 
 }

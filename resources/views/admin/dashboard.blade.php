@@ -55,21 +55,29 @@
                 </div>
             </div>
             
+            <!-- Total Pendapatan Pajak -->
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-blue-500 hover:shadow-2xl transition duration-300">
                 <p class="text-sm font-medium text-blue-600 uppercase mb-2">Total Pendapatan Pajak</p>
-                <p class="text-4xl font-bold text-gray-900">Rp 125,5 Jt</p>
-                <p class="text-xs text-gray-500 mt-2">Target 75% Tercapai</p>
+                <p class="text-4xl font-bold text-gray-900">Rp {{ number_format($statistik_dinpenda['totalPendapatan'] ?? 0, 0, ',', '.') }}</p>
+                <p class="text-xs text-gray-500 mt-2">Target 100% Tercapai</p>
             </div>
+
+            <!-- Wajib Pajak Terdaftar -->
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-teal-500 hover:shadow-2xl transition duration-300">
-                <p class="text-sm font-medium text-teal-600 uppercase mb-2">Wajib Pajak Terdaftar</p>
-                <p class="text-4xl font-bold text-gray-900">12.500</p>
-                <p class="text-xs text-gray-500 mt-2">Data Entitas Wajib Pajak</p>
+                <p class="text-sm font-medium text-teal-600 uppercase mb-2">Nilai Iklan Terpakai</p>
+                <p class="text-4xl font-bold text-gray-900">{{ $statistik_dinpenda['jumlahWajibPajak'] ?? 0 }}</p>
+                <p class="text-xs text-gray-500 mt-2">Data Real-time Setiap Minggu</p>
             </div>
+
+            <!-- Jenis Pajak Terbanyak -->
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-green-500 hover:shadow-2xl transition duration-300">
                 <p class="text-sm font-medium text-green-600 uppercase mb-2">Jenis Pajak Terbanyak</p>
-                <p class="text-2xl font-bold text-gray-900">PBB dan Reklame</p>
-                <p class="text-xs text-gray-500 mt-2">Berdasarkan Jumlah Transaksi</p>
+                <p class="text-2xl font-bold text-gray-900">
+                    {{ is_array($statistik_dinpenda['jenisPajakTerbanyak']) ? implode(' dan ', $statistik_dinpenda['jenisPajakTerbanyak']) : '-' }}
+                </p>
+                <p class="text-xs text-gray-500 mt-2">Berdasarkan Jumlah Iklan</p>
             </div>
+
             
             <div class="bg-blue-600 text-white p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 lg:col-span-3">
                 <h2 class="text-xl font-semibold mb-2">Grafik Tren Pembayaran Pajak (3 Bulan Terakhir)</h2>
@@ -404,6 +412,29 @@ function renderPendudukDetail(data) {
     return html;
 }
 
+function renderPendapatanDetail(data) {
+    if (!data || Object.keys(data).length === 0) {
+        return `<p class="text-red-500">Data pajak tidak ditemukan.</p>`;
+    }
+
+    const tanggal = new Date(data['TANGGAL_PEMBAYARAN']).toLocaleDateString('id-ID');
+
+    return `
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Status Pajak Wajib Pajak</h3>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-gray-700">
+            <div><span class="font-semibold">ID Wajib Pajak:</span> ${data['ID_WAJIB_PAJAK']}</div>
+            <div><span class="font-semibold">Nama WP:</span> ${data['NAMA_WP']}</div>
+            <div><span class="font-semibold">Alamat WP:</span> ${data['ALAMAT_WP']}</div>
+            <div><span class="font-semibold">Jenis Pajak:</span> ${data['JENIS_PAJAK']}</div>
+            <div><span class="font-semibold">Status Pembayaran:</span> <span class="text-green-600 font-bold">${data['STATUS_PEMBAYARAN']}</span></div>
+            <div><span class="font-semibold">ID Pembayaran Terakhir:</span> ${data['ID_PEMBAYARAN_TERAKHIR']}</div>
+            <div><span class="font-semibold">Tanggal Pembayaran:</span> ${tanggal}</div>
+            <div><span class="font-semibold">Jumlah Pembayaran:</span> Rp ${data['JUMLAH_PEMBAYARAN'].toLocaleString('id-ID')}</div>
+        </div>
+    </div>`;
+}
+
 
 
 // Fungsi untuk menangani pencarian/update
@@ -429,6 +460,27 @@ function handleSearch(dinasName, tabName) {
 
     const contentElement = document.getElementById(contentId);
     
+    // Pendapatan daerah
+    if (dinasName === 'pendapatan') {
+    const nikValue = document.getElementById('nikInputPendapatan').value.trim();
+    if (!nikValue) {
+        contentElement.innerHTML = `<p class="text-yellow-600">Silakan masukkan ID Wajib Pajak terlebih dahulu.</p>`;
+        return;
+    }
+
+        fetch(`/admin/pajak/detail?id=${encodeURIComponent(nikValue)}`)
+            .then(res => res.json())
+            .then(data => {
+                contentElement.innerHTML = renderPendapatanDetail(data);
+            })
+            .catch(err => {
+                contentElement.innerHTML = `<p class="text-red-500">Gagal ambil data pajak.</p>`;
+                console.error(err);
+            });
+        return;
+    }
+
+
     // Dinas Pekerjaan umum
     if (dinasName === 'pekerjaan-umum') {
     const proyekId = document.getElementById('inputProyekPU').value.trim();
@@ -449,7 +501,6 @@ function handleSearch(dinasName, tabName) {
     );
     return;
     }
-
 
     // Dinas Kesehatan
     if (dinasName === 'kesehatan') {
@@ -541,15 +592,18 @@ dinasTabs.forEach(tab => {
 // Chart Pendapatan (Line Chart) - DIUBAH MENJADI 3 BULAN
 const ctxPendapatan = document.getElementById('chartPendapatan')?.getContext('2d');
 if(ctxPendapatan){
+    const data = @json($tren_pajak);
+    const labels = data.map(item => item.label);
+    const values = data.map(item => item.total / 1000000);
     new Chart(ctxPendapatan, {
         type:'line',
         data:{
             // Label diubah menjadi 3 bulan
-            labels:['Agu','Sep','Okt'],
+            labels: labels,
             datasets:[{
-                label:'Pendapatan (Milyar)', 
+                label:'Pendapatan (Juta)', 
                 // Data diubah menjadi 3 bulan
-                data:[1.9, 2.0, 2.3], 
+                data: values, 
                 borderColor:'white', 
                 backgroundColor:'rgba(255,255,255,0.3)', 
                 tension:0.4,
